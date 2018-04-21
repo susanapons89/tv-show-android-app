@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+
+    <dimen name="trailer_width_for_detail">150dp</dimen>
+    <dimen name="trailer_height_for_detail">100dp</dimen>
+
+</resources>
