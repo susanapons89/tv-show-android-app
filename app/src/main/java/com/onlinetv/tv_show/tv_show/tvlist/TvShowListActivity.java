@@ -1,11 +1,11 @@
 package com.onlinetv.tv_show.tv_show.tvlist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
@@ -13,7 +13,10 @@ import android.widget.ProgressBar;
 
 import com.onlinetv.tv_show.tv_show.BaseActivity;
 import com.onlinetv.tv_show.tv_show.R;
+import com.onlinetv.tv_show.tv_show.commons.Constants;
 import com.onlinetv.tv_show.tv_show.commons.TvShow;
+import com.onlinetv.tv_show.tv_show.commons.TvShowBaseAdapterCallbacks;
+import com.onlinetv.tv_show.tv_show.showdetail.ShowDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +26,11 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class TvShowListActivity extends BaseActivity implements TvShowListScreenView{
+public class TvShowListActivity extends BaseActivity
+        implements TvShowListScreenView, TvShowBaseAdapterCallbacks{
 
-    private static final String LOG_CAT = TvShowListActivity.class.getSimpleName();
+    private static final String ARG_CURRENT_PAGE = "currentPage";
+    private static final String ARG_TOTAL_PAGES = "totalPages";
 
     @Inject
     TvShowListScreenPresenter mTvShowListScreenPresenter;
@@ -48,9 +53,28 @@ public class TvShowListActivity extends BaseActivity implements TvShowListScreen
         super.onCreate(savedInstanceState);
         initializeRecicleView();
         mSwipeRefresh.setOnRefreshListener(mSwipeListener);
-        mTvShowListScreenPresenter.onViewAttached(this);
+        mTvShowListScreenPresenter.onViewAttached(this, savedInstanceState != null);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(Constants.ARG_TV_SHOW)) {
+                List<TvShow> tvShows = savedInstanceState.getParcelableArrayList(Constants.ARG_TV_SHOW);
+                mAdapter.addAll(tvShows);
+            }
+            if (savedInstanceState.containsKey(ARG_CURRENT_PAGE)) {
+                mTvShowListScreenPresenter.setCurrentPage(savedInstanceState.getInt(ARG_CURRENT_PAGE));
+            }
+            if (savedInstanceState.containsKey(ARG_TOTAL_PAGES)) {
+                mTvShowListScreenPresenter.setTotalPages(savedInstanceState.getInt(ARG_TOTAL_PAGES));
+            }
+        }
     }
 
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     @Override
     protected void onDestroy() {
@@ -65,6 +89,19 @@ public class TvShowListActivity extends BaseActivity implements TvShowListScreen
     {
         super.onPause();
         mTvShowListScreenPresenter.onPaused(mAdapter.getAllShows());
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ArrayList<TvShow> tvShows = mAdapter.getAllShows();
+        if (tvShows != null && !tvShows.isEmpty()) {
+            outState.putParcelableArrayList(Constants.ARG_TV_SHOW, tvShows);
+        }
+
+        outState.putInt(ARG_CURRENT_PAGE, mTvShowListScreenPresenter.getCurrentPage());
+        outState.putInt(ARG_TOTAL_PAGES, mTvShowListScreenPresenter.getTotalPages());
     }
 
 
@@ -149,11 +186,22 @@ public class TvShowListActivity extends BaseActivity implements TvShowListScreen
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onUserClickedMovie(TvShow tvShow) {
+        Intent intent = new Intent(this, ShowDetailActivity.class);
+        intent.putExtra(Constants.ARG_TV_SHOW, tvShow);
+        startActivity(intent);
+    }
+
     private void initializeRecicleView() {
-        mLayoutManager = new GridLayoutManager(this, 2);
+        mLayoutManager = new GridLayoutManager(this, getResources()
+                .getInteger(R.integer.grid_number_cols));
         mRecyclerView.setLayoutManager(mLayoutManager);
         // To avoid "E/RecyclerView: No adapter attached; skipping layout"
-        mAdapter = new TvShowListAdapter(new ArrayList<TvShow>(), this.getBaseContext());
+        mAdapter = new TvShowListAdapter(new ArrayList<TvShow>(), this.getApplicationContext(), this);
         mRecyclerView.setAdapter(mAdapter);
         // Listen to scroll events
         mRecyclerView.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f)));
@@ -181,8 +229,6 @@ public class TvShowListActivity extends BaseActivity implements TvShowListScreen
             if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
                 mTvShowListScreenPresenter.onUserFinishedTvShowPaged();
             }
-            Log.d(LOG_CAT, String.format("visibleItemCount: %d, totalItemCount : %d, firstVisibleItemPosition: %d",
-                    visibleItemCount, totalItemCount, firstVisibleItemPosition));
         }
     };
 
@@ -193,4 +239,6 @@ public class TvShowListActivity extends BaseActivity implements TvShowListScreen
 
         }
     };
+
+
 }

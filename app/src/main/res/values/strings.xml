@@ -2,4 +2,7 @@
     <string name="app_name">tv-show</string>
     <string name="action_settings">Settings</string>
     <string name="tv_list_activity_name">POPULAR TV SHOWS</string>
+    <string name="show_details_activity_name">Details</string>
+    <string name="rating_denominator">/10</string>
+    <string name="related_tv_shows">Related TV Shows:</string>
 </resources>

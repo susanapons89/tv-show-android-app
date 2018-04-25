@@ -10,6 +10,7 @@ import dagger.Module;
 import dagger.Provides;
 
 import com.onlinetv.tv_show.tv_show.commons.PreferenceHelper;
+import com.onlinetv.tv_show.tv_show.showdetail.ShowDetailScreenComponent;
 import com.onlinetv.tv_show.tv_show.tvlist.TvShowListScreenComponent;
 
 /**
@@ -20,7 +21,8 @@ import com.onlinetv.tv_show.tv_show.tvlist.TvShowListScreenComponent;
  * @author Susana Pons
  */
 @Module(subcomponents = {
-        TvShowListScreenComponent.class
+        TvShowListScreenComponent.class,
+        ShowDetailScreenComponent.class
 })
 class AppModule {
 

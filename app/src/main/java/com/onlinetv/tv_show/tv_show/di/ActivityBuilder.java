@@ -7,6 +7,9 @@ import dagger.Module;
 import dagger.android.ActivityKey;
 import dagger.android.AndroidInjector;
 import dagger.multibindings.IntoMap;
+
+import com.onlinetv.tv_show.tv_show.showdetail.ShowDetailActivity;
+import com.onlinetv.tv_show.tv_show.showdetail.ShowDetailScreenComponent;
 import com.onlinetv.tv_show.tv_show.tvlist.TvShowListActivity;
 import com.onlinetv.tv_show.tv_show.tvlist.TvShowListScreenComponent;
 
@@ -31,4 +34,15 @@ abstract class ActivityBuilder {
     @ActivityKey(TvShowListActivity.class)
     abstract AndroidInjector.Factory<? extends Activity> bindShowTvListActivity(
             TvShowListScreenComponent.Builder builder);
+
+    /**
+     * Bind Activity to the component
+     * @param builder Component Builder
+     * @return  Activity Factory
+     */
+    @Binds
+    @IntoMap
+    @ActivityKey(ShowDetailActivity.class)
+    abstract AndroidInjector.Factory<? extends Activity> bindShowDetailActivity(
+            ShowDetailScreenComponent.Builder builder);
 }

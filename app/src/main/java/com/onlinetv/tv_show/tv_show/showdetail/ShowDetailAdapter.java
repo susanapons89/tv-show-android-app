@@ -1,4 +1,4 @@
-package com.onlinetv.tv_show.tv_show.tvlist;
+package com.onlinetv.tv_show.tv_show.showdetail;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,13 +16,11 @@ import java.util.ArrayList;
  * An adapter to inflate the tv shows items with the corresponding data
  */
 
-public class TvShowListAdapter  extends TvShowBaseAdapter {
-
-    private static final int MAX_VOTE_NUM = 10;
+public class ShowDetailAdapter extends TvShowBaseAdapter {
 
 
 
-    public TvShowListAdapter(ArrayList<TvShow> tvShow, Context context,
+    public ShowDetailAdapter(ArrayList<TvShow> tvShow, Context context,
                              TvShowBaseAdapterCallbacks callbacks) {
         super(tvShow, context, callbacks);
     }
@@ -31,10 +29,8 @@ public class TvShowListAdapter  extends TvShowBaseAdapter {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(this.mContext);
         View view = inflater.inflate(R.layout.tv_show_item, parent, false);
-        int gridColsNumber = mContext.getResources().getInteger(R.integer.grid_number_cols);
 
-        view.getLayoutParams().height =
-                (int) (parent.getWidth() / gridColsNumber * TvShow.POSTER_ASPECT_RATIO);
+        view.getLayoutParams().width = (int)(parent.getHeight() / TvShow.POSTER_ASPECT_RATIO);
 
         return new ViewHolder(view);
     }
@@ -42,12 +38,8 @@ public class TvShowListAdapter  extends TvShowBaseAdapter {
 
     @Override
     protected void setTvShowInformation(ViewHolder holder) {
-        holder.mTitleText.setText(holder.mTvShow.getName());
-        holder.mScoreText.setText(String.valueOf(holder.mTvShow.getVote_average()));
-        holder.mTitleText.setVisibility(View.VISIBLE);
-        holder.mScoreText.setVisibility(View.VISIBLE);
-        holder.mRateStar.setRating(holder.mTvShow.getVote_average().floatValue() / MAX_VOTE_NUM);
-        holder.mRateStar.setVisibility(View.VISIBLE);
+        // DO nothing in this case. We do not want to show any title or score
     }
+
 
 }

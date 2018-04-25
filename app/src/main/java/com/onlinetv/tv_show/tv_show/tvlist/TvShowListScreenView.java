@@ -33,6 +33,9 @@ public interface TvShowListScreenView {
     void updateTvShows(List<TvShow> tvShows);
 
 
+    /**
+     * Show that there has been an error loading the TV Shows
+     */
     void showInternetError();
 
 

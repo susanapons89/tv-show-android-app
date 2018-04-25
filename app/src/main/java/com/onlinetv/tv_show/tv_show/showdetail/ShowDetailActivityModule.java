@@ -1,8 +1,6 @@
-package com.onlinetv.tv_show.tv_show.tvlist;
-
+package com.onlinetv.tv_show.tv_show.showdetail;
 
 import com.onlinetv.tv_show.tv_show.commons.MovieDbApi;
-import com.onlinetv.tv_show.tv_show.commons.PreferenceHelper;
 
 import dagger.Module;
 import dagger.Provides;
@@ -16,7 +14,7 @@ import retrofit2.Retrofit;
  * @author Susana Pons
  */
 @Module
-public class TvShowListActivityModule {
+public class ShowDetailActivityModule {
 
 
     /**
@@ -31,8 +29,7 @@ public class TvShowListActivityModule {
     }
 
     @Provides
-    TvShowListScreenPresenter provideTvShowListScreenPresenter(MovieDbApi movieDbApi,
-                                                               PreferenceHelper preferenceHelper) {
-        return new TvShowListScreenPresenter(movieDbApi, preferenceHelper);
+    ShowDetailScreenPresenter provideTvShowDetailScreenPresenter(MovieDbApi movieDbApi) {
+        return new ShowDetailScreenPresenter(movieDbApi);
     }
 }

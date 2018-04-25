@@ -18,8 +18,4 @@ Manifest-merger-release-report.txt
 *.jar
 *.apk
 
-#Gradle wrapper
-/gradlew
-/gradlew.bat
-
 

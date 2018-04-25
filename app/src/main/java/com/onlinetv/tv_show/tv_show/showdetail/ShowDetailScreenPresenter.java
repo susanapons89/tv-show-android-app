@@ -1,13 +1,11 @@
-package com.onlinetv.tv_show.tv_show.tvlist;
+package com.onlinetv.tv_show.tv_show.showdetail;
 
 import android.util.Log;
 
 import com.onlinetv.tv_show.tv_show.commons.Constants;
 import com.onlinetv.tv_show.tv_show.commons.MovieDbApi;
 import com.onlinetv.tv_show.tv_show.commons.MovieDbResultModel;
-import com.onlinetv.tv_show.tv_show.commons.PreferenceHelper;
 import com.onlinetv.tv_show.tv_show.commons.TvShow;
-
 
 import java.util.List;
 import java.util.Locale;
@@ -25,17 +23,20 @@ import retrofit2.Response;
  *
  * @author Susana Pons
  */
-class TvShowListScreenPresenter {
+class ShowDetailScreenPresenter {
 
-    private static final String LOG_TAG =TvShowListScreenPresenter.class.getSimpleName();
+    private static final String LOG_TAG = ShowDetailScreenPresenter.class.getSimpleName();
     private static final int FIRST_PAGE = 1;
 
+
     private final MovieDbApi mMovieDbApi;
-    private  final PreferenceHelper mPreferenceHelper;
-    private TvShowListScreenView mTvShowListScreenView;
+
+    private ShowDetailScreenView mShowDetailScreenView;
+
+    private boolean mIsLoadingNewPages = false;
     private int mCurrentPage;
     private int mTotalPageNumber;
-    private boolean mIsLoadingNewPages = false;
+    private int mTvId;
 
 
     /**
@@ -43,43 +44,34 @@ class TvShowListScreenPresenter {
      * @param movieDbApi
      */
     @Inject
-    TvShowListScreenPresenter(MovieDbApi movieDbApi, PreferenceHelper preferenceHelper) {
+    ShowDetailScreenPresenter(MovieDbApi movieDbApi) {
         mMovieDbApi = movieDbApi;
-        mPreferenceHelper = preferenceHelper;
     }
 
-    /**
-     * Attach the view with the presenter and get the Popular TV Shows
-     */
-    void onViewAttached(TvShowListScreenView tvShowListScreenView, boolean isInstancedSaved) {
-        mTvShowListScreenView = tvShowListScreenView;
+    void onViewAttached (ShowDetailScreenView showDetailScreenView,
+                         Integer tvId,
+                         boolean isInstancedSaved) {
+        mShowDetailScreenView = showDetailScreenView;
+        mTvId = tvId;
         if (!isInstancedSaved) {
-            getPopularTvShows(FIRST_PAGE, false);
-            mTvShowListScreenView.showLoadginPage();
+            getSimilarTvShows(tvId, FIRST_PAGE);
         }
+
     }
+
 
     void onViewDetached() {
-        mTvShowListScreenView = null;
+        mShowDetailScreenView = null;
     }
 
-    void onPaused(List<TvShow> tvShows) {
-        // Store movies on cache
-        if (tvShows != null && !tvShows.isEmpty()) {
-            mPreferenceHelper.setCacheTvShows(tvShows);
-        }
-    }
 
     void onUserFinishedTvShowPaged() {
+
         if (!mIsLoadingNewPages && mCurrentPage < mTotalPageNumber) {
             Log.d(LOG_TAG, "Show next page!!!");
-            getPopularTvShows(mCurrentPage + 1, false);
-            mTvShowListScreenView.showLoadginPage();
+            mIsLoadingNewPages = true;
+            getSimilarTvShows(mTvId, mCurrentPage + 1);
         }
-    }
-
-    void onUserRefreshedPage() {
-        getPopularTvShows(FIRST_PAGE, true);
     }
 
     /**
@@ -117,11 +109,12 @@ class TvShowListScreenPresenter {
         mTotalPageNumber = totalPages;
     }
 
+
     //////////  PRIVATE METHODS ////////
 
-    private void getPopularTvShows(int page, final boolean isPagedRefreshed) {
-        mIsLoadingNewPages = true;
-        Call<MovieDbResultModel> call = mMovieDbApi.getPopularTvShows(Constants.API_KEY_MOVIE_DB,
+    private void getSimilarTvShows(Integer tvId, int page) {
+
+        Call<MovieDbResultModel> call = mMovieDbApi.getSimilarTvShows(tvId, Constants.API_KEY_MOVIE_DB,
                 Locale.getDefault().getLanguage(), page);
 
         call.enqueue(new Callback<MovieDbResultModel>() {
@@ -132,12 +125,8 @@ class TvShowListScreenPresenter {
                 mCurrentPage = popularMoviesResult.getPage();
                 mTotalPageNumber = popularMoviesResult.getTotal_pages();
                 List<TvShow> tvShowList = popularMoviesResult.getResults();
-                if (mTvShowListScreenView != null && !isPagedRefreshed) {
-                    mTvShowListScreenView.showMostPopularTvShows(tvShowList);
-                    mTvShowListScreenView.hideLoadingPage();
-                } else if (mTvShowListScreenView != null) {
-                    mTvShowListScreenView.updateTvShows(tvShowList);
-                    mTvShowListScreenView.hideLoadingPage();
+                if (mShowDetailScreenView != null) {
+                    mShowDetailScreenView.showRelatedTvShows(tvShowList);
                 }
                 mIsLoadingNewPages = false;
             }
@@ -146,14 +135,7 @@ class TvShowListScreenPresenter {
             public void onFailure(Call<MovieDbResultModel> call, Throwable t) {
                 Log.e(LOG_TAG, t.getMessage(), t);
                 mIsLoadingNewPages = false;
-                mTvShowListScreenView.hideLoadingPage();
-                mTvShowListScreenView.showInternetError();
-                // Check if we can get tvShows from cache
-                List<TvShow> tvShows = mPreferenceHelper.getCacheTvShows();
-                if (tvShows != null && !isPagedRefreshed && mCurrentPage == 1) {
-                    // Only update shows if there is no show currently
-                    mTvShowListScreenView.updateTvShows(tvShows);
-                }
+                mShowDetailScreenView.showInternetError();
             }
         });
     }

@@ -1,0 +1,103 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    tools:context=".showdetail.ShowDetailsFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/margin_large"
+        android:clipChildren="false">
+
+        <ImageView
+            android:id="@+id/backdrop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/details_backdrop_height"
+            android:scaleType="fitXY"/>
+
+        <ImageView
+            android:id="@+id/poster"
+            android:layout_width="@dimen/details_poster_width"
+            android:layout_height="@dimen/details_poster_height"
+            android:layout_marginTop="@dimen/details_poster_margin_top"
+            android:layout_marginStart="@dimen/margin_large" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/backdrop"
+            android:layout_toEndOf="@id/poster"
+            android:layout_marginTop="@dimen/margin_default"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginRight="@dimen/margin_large"
+            android:layout_marginEnd="@dimen/margin_large"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+        <TextView
+            android:id="@+id/release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_toEndOf="@id/poster"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginEnd="@dimen/margin_default"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+        <LinearLayout
+            android:id="@+id/rating_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/release_date"
+            android:layout_toEndOf="@id/poster"
+            android:layout_marginTop="-8dp"
+            android:layout_marginStart="@dimen/margin_large"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:clipChildren="false">
+
+            <TextView
+                android:id="@+id/rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+                android:textColor="?android:attr/textColorPrimary"
+                tools:text="7.3"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_default"
+                android:text="@string/rating_denominator"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="?android:attr/textColorSecondary"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/synopsis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/poster"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/margin_default"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginStart="@dimen/margin_default"
+            android:layout_marginRight="@dimen/margin_large"
+            android:layout_marginEnd="@dimen/margin_default"
+            android:lineSpacingMultiplier="@dimen/body_text_line_spacing"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            />
+
+    </RelativeLayout>
+
+</ScrollView>
