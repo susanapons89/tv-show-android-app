@@ -119,7 +119,7 @@ class TvShowListScreenPresenter {
 
     //////////  PRIVATE METHODS ////////
 
-    private void getPopularTvShows(int page, final boolean isPagedRefreshed) {
+    private void getPopularTvShows(final int page, final boolean isPagedRefreshed) {
         mIsLoadingNewPages = true;
         Call<MovieDbResultModel> call = mMovieDbApi.getPopularTvShows(Constants.API_KEY_MOVIE_DB,
                 Locale.getDefault().getLanguage(), page);
@@ -150,7 +150,7 @@ class TvShowListScreenPresenter {
                 mTvShowListScreenView.showInternetError();
                 // Check if we can get tvShows from cache
                 List<TvShow> tvShows = mPreferenceHelper.getCacheTvShows();
-                if (tvShows != null && !isPagedRefreshed && mCurrentPage == 1) {
+                if (tvShows != null && !isPagedRefreshed && page == 1) {
                     // Only update shows if there is no show currently
                     mTvShowListScreenView.updateTvShows(tvShows);
                 }
